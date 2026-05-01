@@ -34,6 +34,9 @@ body{
     z-index:999;
     display:flex;
     gap:10px;
+    flex-wrap:wrap;
+    max-width:95%;
+    justify-content:center;
 }
 
 button{
@@ -233,6 +236,8 @@ function uploadPhoto(){
     input.onchange = ()=>{
 
         const file = input.files[0];
+
+        if(!file) return;
 
         const reader = new FileReader();
 
