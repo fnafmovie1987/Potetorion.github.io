@@ -12,7 +12,7 @@ body{
     background:#0d0d0d;
     color:white;
     font-family:sans-serif;
-    padding:15px 15px 100px;
+    padding:15px 15px 120px;
 }
 
 h1{
@@ -41,7 +41,7 @@ h1{
 .day{
     background:#1b1b1b;
     border-radius:16px;
-    min-height:120px;
+    min-height:150px;
     padding:6px;
     overflow:hidden;
 }
@@ -61,6 +61,16 @@ h1{
     font-size:12px;
     color:#ddd;
     white-space:pre-wrap;
+}
+
+.image-container{
+    margin-top:8px;
+}
+
+.day-image{
+    width:100%;
+    border-radius:10px;
+    margin-top:5px;
 }
 
 .sticker-bar{
@@ -129,11 +139,15 @@ onclick="selectSticker('🐻',this)">🐻</button>
 onclick="mode='memo'">✏️ Memo</button>
 
 <button class="control-btn"
+onclick="mode='image'">📷 Photo</button>
+
+<button class="control-btn"
 onclick="mode='delete'">🗑️ Delete</button>
 
 </div>
 
 <script>
+
 const calendar = document.getElementById("calendar");
 
 const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -175,11 +189,25 @@ for(let i=1;i<=31;i++){
     const memo = document.createElement("div");
     memo.className = "memo";
 
+    const imageContainer = document.createElement("div");
+    imageContainer.className = "image-container";
+
+    const image = document.createElement("img");
+    image.className = "day-image";
+
     stickers.innerHTML =
         localStorage.getItem("stickers"+i) || "";
 
     memo.innerText =
         localStorage.getItem("memo"+i) || "";
+
+    const savedImage =
+        localStorage.getItem("image"+i);
+
+    if(savedImage){
+        image.src = savedImage;
+        imageContainer.appendChild(image);
+    }
 
     day.onclick = ()=>{
 
@@ -191,15 +219,6 @@ for(let i=1;i<=31;i++){
                 "stickers"+i,
                 stickers.innerHTML
             );
-        }
-
-        else if(mode === "delete"){
-
-            stickers.innerHTML = "";
-            memo.innerText = "";
-
-            localStorage.removeItem("stickers"+i);
-            localStorage.removeItem("memo"+i);
         }
 
         else if(mode === "memo"){
@@ -216,14 +235,61 @@ for(let i=1;i<=31;i++){
                 );
             }
         }
+
+        else if(mode === "image"){
+
+            const input =
+                document.createElement("input");
+
+            input.type = "file";
+            input.accept = "image/*";
+
+            input.onchange = ()=>{
+
+                const file = input.files[0];
+
+                const reader = new FileReader();
+
+                reader.onload = function(e){
+
+                    image.src = e.target.result;
+
+                    if(!imageContainer.contains(image)){
+                        imageContainer.appendChild(image);
+                    }
+
+                    localStorage.setItem(
+                        "image"+i,
+                        e.target.result
+                    );
+                };
+
+                reader.readAsDataURL(file);
+            };
+
+            input.click();
+        }
+
+        else if(mode === "delete"){
+
+            stickers.innerHTML = "";
+            memo.innerText = "";
+            image.src = "";
+
+            localStorage.removeItem("stickers"+i);
+            localStorage.removeItem("memo"+i);
+            localStorage.removeItem("image"+i);
+        }
     };
 
     day.appendChild(number);
     day.appendChild(stickers);
     day.appendChild(memo);
+    day.appendChild(imageContainer);
 
     calendar.appendChild(day);
 }
+
 </script>
 
 </body>
