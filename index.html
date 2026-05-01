@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Our Calendar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body{
+      background:#111;
+      color:white;
+      font-family:sans-serif;
+      text-align:center;
+      padding:20px;
+    }
+
+    h1{
+      color:pink;
+    }
+
+    .calendar{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:10px;
+      margin-top:20px;
+    }
+
+    .day{
+      background:#222;
+      border-radius:15px;
+      min-height:80px;
+      padding:10px;
+      font-size:18px;
+    }
+
+    .sticker{
+      margin-top:10px;
+      font-size:24px;
+    }
+
+    button{
+      margin-top:20px;
+      padding:10px 20px;
+      border:none;
+      border-radius:10px;
+      background:purple;
+      color:white;
+      font-size:16px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>❤️ Our Calendar ❤️</h1>
+
+<button onclick="addSticker()">Add ❤️ Sticker</button>
+
+<div class="calendar">
+  <div class="day">
+    1
+    <div class="sticker" id="sticker1"></div>
+  </div>
+</div>
+
+<script>
+function addSticker(){
+  document.getElementById("sticker1").innerHTML += "❤️";
+}
+</script>
+
+</body>
+</html>
