@@ -4,281 +4,291 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Our Memory Board</title>
+<title>Our Calendar</title>
 
 <style>
-
 body{
     margin:0;
     background:#0d0d0d;
-    overflow:hidden;
+    color:white;
     font-family:sans-serif;
-    color:white;
+    padding:15px 15px 120px;
 }
 
-#board{
-    width:100vw;
-    height:100vh;
-    position:relative;
+h1{
+    text-align:center;
+    color:#ffb6d9;
+}
+
+.month{
+    text-align:center;
+    font-size:24px;
+    margin-bottom:20px;
+}
+
+.calendar{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:8px;
+}
+
+.day-name{
+    text-align:center;
+    color:#888;
+    font-size:14px;
+}
+
+.day{
+    background:#1b1b1b;
+    border-radius:16px;
+    min-height:150px;
+    padding:6px;
     overflow:hidden;
 }
 
-.topbar{
-    position:fixed;
-    top:10px;
-    left:50%;
-    transform:translateX(-50%);
-    background:#1a1a1a;
-    padding:10px;
-    border-radius:20px;
-    z-index:999;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    max-width:95%;
-    justify-content:center;
+.number{
+    font-size:14px;
 }
 
-button{
-    border:none;
-    border-radius:12px;
-    padding:10px 14px;
-    background:purple;
-    color:white;
-    font-size:16px;
-}
-
-.sticker{
-    position:absolute;
-    font-size:50px;
-    cursor:grab;
-    user-select:none;
-}
-
-.photo{
-    position:absolute;
-    width:140px;
-    border-radius:16px;
-    cursor:grab;
-    user-select:none;
+.stickers{
+    font-size:22px;
+    margin-top:5px;
+    word-break:break-word;
 }
 
 .memo{
-    position:absolute;
-    min-width:120px;
-    min-height:80px;
-    background:#222;
-    padding:10px;
-    border-radius:16px;
-    color:white;
-    font-size:14px;
-    cursor:grab;
+    margin-top:6px;
+    font-size:12px;
+    color:#ddd;
     white-space:pre-wrap;
+}
+
+.image-container{
+    margin-top:8px;
+}
+
+.day-image{
+    width:100%;
+    border-radius:10px;
+    margin-top:5px;
+}
+
+.sticker-bar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:#151515;
+    border-top:2px solid #333;
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    padding:12px;
+    flex-wrap:wrap;
+}
+
+.sticker-btn{
+    font-size:26px;
+    background:#262626;
+    border:none;
+    border-radius:12px;
+    padding:8px 12px;
+    color:white;
 }
 
 .selected{
     outline:3px solid hotpink;
 }
 
+.control-btn{
+    background:purple;
+    color:white;
+    border:none;
+    border-radius:10px;
+    padding:10px;
+}
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
+<h1>❤️ Our Calendar ❤️</h1>
 
-<button onclick="addSticker('❤️')">❤️</button>
-<button onclick="addSticker('🎮')">🎮</button>
-<button onclick="addSticker('⭐')">⭐</button>
-<button onclick="addSticker('🐻')">🐻</button>
+<div class="month">May 2026</div>
 
-<button onclick="addMemo()">📝 Memo</button>
+<div class="calendar" id="calendar"></div>
 
-<button onclick="uploadPhoto()">📷 Photo</button>
+<div class="sticker-bar">
 
-<button onclick="deleteSelected()">🗑️ Delete</button>
+<button class="sticker-btn selected"
+onclick="selectSticker('❤️',this)">❤️</button>
+
+<button class="sticker-btn"
+onclick="selectSticker('🎮',this)">🎮</button>
+
+<button class="sticker-btn"
+onclick="selectSticker('😴',this)">😴</button>
+
+<button class="sticker-btn"
+onclick="selectSticker('⭐',this)">⭐</button>
+
+<button class="sticker-btn"
+onclick="selectSticker('🐻',this)">🐻</button>
+
+<button class="control-btn"
+onclick="mode='memo'">✏️ Memo</button>
+
+<button class="control-btn"
+onclick="mode='image'">📷 Photo</button>
+
+<button class="control-btn"
+onclick="mode='delete'">🗑️ Delete</button>
 
 </div>
 
-<div id="board"></div>
-
 <script>
 
-const board = document.getElementById("board");
+const calendar = document.getElementById("calendar");
 
-let selected = null;
+const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-function saveBoard(){
+days.forEach(day=>{
+    const div = document.createElement("div");
+    div.className = "day-name";
+    div.innerText = day;
+    calendar.appendChild(div);
+});
 
-    localStorage.setItem(
-        "boardData",
-        board.innerHTML
-    );
+let selectedSticker = "❤️";
+let mode = "sticker";
+
+function selectSticker(sticker,btn){
+
+    mode = "sticker";
+
+    selectedSticker = sticker;
+
+    document.querySelectorAll(".sticker-btn")
+    .forEach(b=>b.classList.remove("selected"));
+
+    btn.classList.add("selected");
 }
 
-function loadBoard(){
+for(let i=1;i<=31;i++){
 
-    const data =
-        localStorage.getItem("boardData");
+    const day = document.createElement("div");
+    day.className = "day";
 
-    if(data){
+    const number = document.createElement("div");
+    number.className = "number";
+    number.innerText = i;
 
-        board.innerHTML = data;
+    const stickers = document.createElement("div");
+    stickers.className = "stickers";
 
-        restoreDrag();
+    const memo = document.createElement("div");
+    memo.className = "memo";
+
+    const imageContainer = document.createElement("div");
+    imageContainer.className = "image-container";
+
+    const image = document.createElement("img");
+    image.className = "day-image";
+
+    stickers.innerHTML =
+        localStorage.getItem("stickers"+i) || "";
+
+    memo.innerText =
+        localStorage.getItem("memo"+i) || "";
+
+    const savedImage =
+        localStorage.getItem("image"+i);
+
+    if(savedImage){
+        image.src = savedImage;
+        imageContainer.appendChild(image);
     }
-}
 
-function createDraggable(element){
+    day.onclick = ()=>{
 
-    let offsetX = 0;
-    let offsetY = 0;
-    let isDragging = false;
+        if(mode === "sticker"){
 
-    element.addEventListener("pointerdown",(e)=>{
+            stickers.innerHTML += selectedSticker;
 
-        selected = element;
+            localStorage.setItem(
+                "stickers"+i,
+                stickers.innerHTML
+            );
+        }
 
-        document.querySelectorAll(
-            ".selected"
-        ).forEach(el=>{
-            el.classList.remove("selected");
-        });
+        else if(mode === "memo"){
 
-        element.classList.add("selected");
+            const text = prompt("メモを書く");
 
-        isDragging = true;
+            if(text){
 
-        offsetX = e.clientX - element.offsetLeft;
-        offsetY = e.clientY - element.offsetTop;
+                memo.innerText = text;
 
-        element.setPointerCapture(e.pointerId);
-    });
+                localStorage.setItem(
+                    "memo"+i,
+                    text
+                );
+            }
+        }
 
-    element.addEventListener("pointermove",(e)=>{
+        else if(mode === "image"){
 
-        if(!isDragging) return;
+            const input =
+                document.createElement("input");
 
-        element.style.left =
-            (e.clientX - offsetX) + "px";
+            input.type = "file";
+            input.accept = "image/*";
 
-        element.style.top =
-            (e.clientY - offsetY) + "px";
-    });
+            input.onchange = ()=>{
 
-    element.addEventListener("pointerup",()=>{
+                const file = input.files[0];
 
-        isDragging = false;
+                const reader = new FileReader();
 
-        saveBoard();
-    });
-}
+                reader.onload = function(e){
 
-function restoreDrag(){
+                    image.src = e.target.result;
 
-    board.querySelectorAll(
-        ".sticker, .photo, .memo"
-    ).forEach(el=>{
+                    if(!imageContainer.contains(image)){
+                        imageContainer.appendChild(image);
+                    }
 
-        createDraggable(el);
-    });
-}
+                    localStorage.setItem(
+                        "image"+i,
+                        e.target.result
+                    );
+                };
 
-function addSticker(emoji){
+                reader.readAsDataURL(file);
+            };
 
-    const div = document.createElement("div");
+            input.click();
+        }
 
-    div.className = "sticker";
+        else if(mode === "delete"){
 
-    div.innerText = emoji;
+            stickers.innerHTML = "";
+            memo.innerText = "";
+            image.src = "";
 
-    div.style.left = "100px";
-    div.style.top = "100px";
-
-    board.appendChild(div);
-
-    createDraggable(div);
-
-    saveBoard();
-}
-
-function addMemo(){
-
-    const text = prompt("メモを書く");
-
-    if(!text) return;
-
-    const div = document.createElement("div");
-
-    div.className = "memo";
-
-    div.innerText = text;
-
-    div.style.left = "120px";
-    div.style.top = "120px";
-
-    board.appendChild(div);
-
-    createDraggable(div);
-
-    saveBoard();
-}
-
-function uploadPhoto(){
-
-    const input =
-        document.createElement("input");
-
-    input.type = "file";
-
-    input.accept = "image/*";
-
-    input.onchange = ()=>{
-
-        const file = input.files[0];
-
-        if(!file) return;
-
-        const reader = new FileReader();
-
-        reader.onload = (e)=>{
-
-            const img =
-                document.createElement("img");
-
-            img.src = e.target.result;
-
-            img.className = "photo";
-
-            img.style.left = "150px";
-            img.style.top = "150px";
-
-            board.appendChild(img);
-
-            createDraggable(img);
-
-            saveBoard();
-        };
-
-        reader.readAsDataURL(file);
+            localStorage.removeItem("stickers"+i);
+            localStorage.removeItem("memo"+i);
+            localStorage.removeItem("image"+i);
+        }
     };
 
-    input.click();
+    day.appendChild(number);
+    day.appendChild(stickers);
+    day.appendChild(memo);
+    day.appendChild(imageContainer);
+
+    calendar.appendChild(day);
 }
-
-function deleteSelected(){
-
-    if(selected){
-
-        selected.remove();
-
-        selected = null;
-
-        saveBoard();
-    }
-}
-
-loadBoard();
 
 </script>
 
