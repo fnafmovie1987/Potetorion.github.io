@@ -1,70 +1,165 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <title>Our Calendar</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body{
-      background:#111;
-      color:white;
-      font-family:sans-serif;
-      text-align:center;
-      padding:20px;
-    }
+<title>Our Calendar</title>
 
-    h1{
-      color:pink;
-    }
+<style>
+body{
+    margin:0;
+    background:#0d0d0d;
+    color:white;
+    font-family:sans-serif;
+    padding:15px;
+}
 
-    .calendar{
-      display:grid;
-      grid-template-columns:repeat(7,1fr);
-      gap:10px;
-      margin-top:20px;
-    }
+h1{
+    text-align:center;
+    color:#ffb6d9;
+    margin-bottom:10px;
+}
 
-    .day{
-      background:#222;
-      border-radius:15px;
-      min-height:80px;
-      padding:10px;
-      font-size:18px;
-    }
+.month{
+    text-align:center;
+    font-size:24px;
+    margin-bottom:20px;
+}
 
-    .sticker{
-      margin-top:10px;
-      font-size:24px;
-    }
+.calendar{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:8px;
+}
 
-    button{
-      margin-top:20px;
-      padding:10px 20px;
-      border:none;
-      border-radius:10px;
-      background:purple;
-      color:white;
-      font-size:16px;
-    }
-  </style>
+.day-name{
+    text-align:center;
+    color:#aaa;
+    font-size:14px;
+}
+
+.day{
+    background:#1b1b1b;
+    border-radius:16px;
+    min-height:90px;
+    padding:6px;
+    position:relative;
+    transition:0.2s;
+}
+
+.day:active{
+    transform:scale(0.95);
+}
+
+.number{
+    font-size:14px;
+}
+
+.stickers{
+    margin-top:8px;
+    font-size:24px;
+    line-height:1.3;
+    word-break:break-word;
+}
+
+.sticker-bar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:#151515;
+    border-top:2px solid #333;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    padding:12px;
+}
+
+.sticker-btn{
+    font-size:28px;
+    background:#262626;
+    border:none;
+    border-radius:12px;
+    padding:8px 12px;
+    color:white;
+}
+
+.selected{
+    outline:3px solid hotpink;
+}
+</style>
 </head>
 
 <body>
 
 <h1>❤️ Our Calendar ❤️</h1>
 
-<button onclick="addSticker()">Add ❤️ Sticker</button>
+<div class="month">May 2026</div>
 
-<div class="calendar">
-  <div class="day">
-    1
-    <div class="sticker" id="sticker1"></div>
-  </div>
+<div class="calendar" id="calendar"></div>
+
+<div class="sticker-bar">
+    <button class="sticker-btn selected" onclick="selectSticker('❤️', this)">❤️</button>
+    <button class="sticker-btn" onclick="selectSticker('🎮', this)">🎮</button>
+    <button class="sticker-btn" onclick="selectSticker('😴', this)">😴</button>
+    <button class="sticker-btn" onclick="selectSticker('⭐', this)">⭐</button>
+    <button class="sticker-btn" onclick="selectSticker('🐻', this)">🐻</button>
 </div>
 
 <script>
-function addSticker(){
-  document.getElementById("sticker1").innerHTML += "❤️";
+const calendar = document.getElementById("calendar");
+
+const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+days.forEach(day=>{
+    const div = document.createElement("div");
+    div.className = "day-name";
+    div.innerText = day;
+    calendar.appendChild(div);
+});
+
+let selectedSticker = "❤️";
+
+function selectSticker(sticker, btn){
+
+    selectedSticker = sticker;
+
+    document.querySelectorAll(".sticker-btn")
+    .forEach(b=>b.classList.remove("selected"));
+
+    btn.classList.add("selected");
+}
+
+for(let i=1;i<=31;i++){
+
+    const day = document.createElement("div");
+    day.className = "day";
+
+    const number = document.createElement("div");
+    number.className = "number";
+    number.innerText = i;
+
+    const stickers = document.createElement("div");
+    stickers.className = "stickers";
+
+    day.appendChild(number);
+    day.appendChild(stickers);
+
+    day.onclick = ()=>{
+
+        stickers.innerHTML += selectedSticker;
+
+        localStorage.setItem(
+            "day"+i,
+            stickers.innerHTML
+        );
+    };
+
+    stickers.innerHTML =
+        localStorage.getItem("day"+i) || "";
+
+    calendar.appendChild(day);
 }
 </script>
 
